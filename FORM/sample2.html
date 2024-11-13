@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <form id="fomr1">
+        <input type="text" name="name" placeholder="Username">
+        <input type="number" name="age" placeholder="age">
+        <input type="email" name="email" placeholder="email">
+
+        <button>Submit</button>
+
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <td>Sr no</td>
+                <td>Name</td>
+                <td>Age</td>
+                <td>Email</td>
+                <td>Edit</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
+        <tbody id="users">
+
+        </tbody>
+    </table>
+
+    <script>
+        let editId = null;
+
+        document.getElementById("fomr1").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+            let usersData = {};
+
+            formData.forEach((value, key) => {
+                usersData[key] = value;
+            })
+
+            fetch(editId ? "http://localhost:5050/edit-user" : "http://localhost:5050/add-user", {
+                method: editId ? "put" : "post",
+                headers: {
+                    "Content-Type": "Application/JSON"
+                },
+                body: JSON.stringify({
+                    ...usersData,
+                    id: editId
+                })
+            }).then(res => res.json())
+                .then(() => alert(editId ? "Updated" : "Submitted"))
+                .catch(err => console.log("err ", err))
+                .finally(() => {
+                    editId = null;
+                    fetchUser();
+                    document.querySelectorAll('input').forEach(item => {
+                        item.value = ""
+                    })
+                })
+
+
+        })
+
+        function fetchUser() {
+            document.getElementById('users').innerHTML = ``;
+            fetch("http://localhost:5050/get-user")
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach((item, ind) => {
+                        document.getElementById('users').innerHTML += `
+                        <tr>
+                            <td>${ind + 1}</td>
+                            <td>${item.name}</td>
+                            <td>${item.age}</td>
+                            <td>${item.email}</td>
+                            <td><button class="edit" data-id=${item._id}>Edit</button></td>
+                            <td><button class="del" data-id=${item._id}>Delete</button></td>
+                        </tr>
+                    
+                    `
+
+                        document.querySelectorAll('.del').forEach(item => {
+                            item.addEventListener("click", function () {
+                                let id = this.getAttribute('data-id')
+                                deleteUser(id)
+
+                            })
+                        })
+
+                        document.querySelectorAll('.edit').forEach(item => {
+                            item.addEventListener("click", function () {
+                                let id = this.getAttribute('data-id')
+                                editUser(id)
+
+                            })
+                        })
+
+
+
+                    })
+                })
+        }
+
+        fetchUser();
+
+        function editUser(id) {
+            fetch(`http://localhost:5050/get-user/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    editId = id;
+                    document.querySelectorAll('input').forEach(item => {
+                        item.value = data[item.name]
+                    })
+                }
+                )
+        }
+
+        function deleteUser(id) {
+            fetch("http://localhost:5050/delete-user", {
+                method: "delete",
+                headers: {
+                    "Content-Type": "Application/JSON"
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            }).then(res => res.json())
+                .then(() => {
+                    alert("Deleted successfully")
+                })
+                .catch(err => console.log(err))
+                .finally(() => fetchUser())
+        }
+
+    </script>
+</body>
+
+</html>

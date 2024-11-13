@@ -1,0 +1,14 @@
+<!-- partials/navigation.ejs -->
+<nav>
+    <ul>
+        <!-- <li><a href="/">Home</a></li>
+        <li><a href="/about">URL</a></li>
+        <li><a href="/contact">Contact</a></li> -->
+
+        <% Object.keys(routes).forEach(function (routeName) { %>
+            <li><a href="<%= routes[routeName] %>">
+                    <%= routeName %>
+                </a></li>
+            <% }); %>
+    </ul>
+</nav>

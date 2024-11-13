@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="myForm">
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+
+        <input type="radio" name="gender" id="g1" value="Male">Male
+        <input type="radio" name="gender" id="g2" value="Female">Female
+        <input type="radio" name="gender" id="g3" value="Other">Other
+
+        <input type="checkbox" name="hobby" id="c1" value="Coding">Coding
+        <input type="checkbox" name="hobby" id="c2" value="Cricket">Cricket
+        <input type="checkbox" name="hobby" id="c3" value="Teaching">Teaching
+
+        <input type="file" name="userpic" id="">
+
+
+        <button type="submit" class="btn btn-primary" id="extractButton">Extract</button>
+
+        <div id="show"></div>
+
+    </form>
+
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(this); // Create a FormData object from the form
+
+            // Convert the FormData object to JSON
+            const params = {};
+            console.log(formData);
+
+            formData.forEach((value, key) => {
+
+                let val = value;
+                if (key === "hobby") {
+                    let arr = [];
+                    let cbox = document.querySelectorAll('input[name="hobby"]');
+                    cbox.forEach(item => {
+                        if (item.checked) {
+                            arr.push(item.value)
+                        }
+                    })
+                    val = arr;
+
+                }
+                params[key] = val;
+            });
+            const body = JSON.stringify(params);
+            console.log(body);
+            console.log(params);
+
+            let upic = URL.createObjectURL(params.userpic)
+
+            document.getElementById('show').innerHTML += `
+                <p>${params.username}</p>
+                <p>${params.hobby.join(', ')}</p>
+                <img src="${upic}">
+            
+            `
+
+            // Make a POST request to the /extract route with form data
+            // fetch('/extract', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: body
+            // });
+        });
+    </script>
+</body>
+
+</html>

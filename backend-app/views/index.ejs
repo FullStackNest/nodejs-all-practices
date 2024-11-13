@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+    <h1>Welcome to NODE.JS </h1>
+
+    <header>
+        <h1>Header</h1>
+    </header>
+
+    <%- include('partials/navigation', {routes: routes}) %>
+
+        <main>
+            <%= data %>
+                <!-- static/ -->
+                <img class="banner-title" src="images/CHEAP-TEXT.png" alt="">
+                <img src="<%= imagePath %>" alt="Image from File path">
+        </main>
+
+        <%- include('partials/footer') %>
+
+            <%- include('partials/end') %>
