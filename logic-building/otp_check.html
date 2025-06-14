@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #otp {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .otps {
+            height: 60px;
+            width: 60px;
+            border: 1px solid dodgerblue;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="generateOtp()">Generate OTP</button>
+    <div id="otp"></div>
+
+    <script>
+
+        function generateOtp() {
+            const lenth = 6;
+            let otpDiv = document.getElementById("otp");
+            otpDiv.innerHTML = ``;
+            let otpPattern = '';
+            for (let i = 0; i < lenth; i++) {
+                let otpNumber = Math.floor(Math.random() * 10);
+                otpPattern += otpNumber;
+
+                otpDiv.innerHTML += `
+                <div class="otps">
+                    <p>${otpNumber}</p>
+                </div>
+                `
+            }
+
+            otpDiv.insertAdjacentHTML("afterend", `
+                <input type="text" placeholder="Enter OTP" id="userOtp">
+                <button id="check">Check</button>
+                <p id="verify"></p>
+            
+            `)
+
+            document.getElementById("check").addEventListener("click", function () {
+                let userOtp = document.getElementById("userOtp").value;
+                let verify = document.getElementById("verify");
+                // if (userOtp == otpPattern) {
+                //     verify.innerText = "OTP Valid!"
+                //     verify.style.color = "green";
+                // } else {
+                //     verify.innerText = "OTP INVALID !"
+                //     verify.style.color = "red";
+                // }
+
+                verify.innerText = userOtp == otpPattern ? "OTP Valid!" : "OTP INVALID !";
+                verify.style.color = userOtp == otpPattern ? "green" : "red";
+            })
+
+
+
+        }
+
+    </script>
+</body>
+
+</html>
